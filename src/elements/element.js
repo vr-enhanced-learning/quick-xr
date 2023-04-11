@@ -2,6 +2,27 @@ import Position from "../utils/position"
 import MouseEventHandler from "../utils/mouseEventHandler"
 
 export default class Element {
+	constructor(quickxr, domElement, layer) {
+		this.quickxr = quickxr
+		this.domElement = domElement
+		this.layer = layer
+		this.domElement.element = this // so we can do domeElement.parentNode.element
+		this.childElements = new Set()
+
+		this.entity = null // aframe entity this null becasue Element class is abstract
+		this.visible = true
+		if (this.domElement.classList.contains("vr-span"))
+			this.paddingToMargin()
+		this.position = new Position(
+			this.domElement.getBoundingClientRect(),
+			layer * this.quickxr.settings.layerStep,
+			quickxr.settings.scale
+		)
+		this.style = window.getComputedStyle(this.domElement)
+		this.parentTransform = "none"
+		this.needsStartingTransformSize = true
+	}
+
 	// call after entity is created in inheriting class
 	initEventHandlers() {
 		this.initHover()
